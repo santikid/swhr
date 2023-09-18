@@ -1,0 +1,11 @@
+services:
+  - path: "/service1"
+    method: "POST"
+    dir: "/home/user/test_d1"
+    script: "/home/user/script_1"
+    api_key: "ANY_UTF8_STRING"
+
+  - path: "/service2"
+    method: "GET"
+    dir: "/home/user/test_d2"
+    script: "/home/user/script_2"
