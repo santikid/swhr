@@ -6,7 +6,7 @@ on:
       - published
 
 jobs:
-  build-linux-windows:
+  build-linux:
     permissions:
       contents: write
     runs-on: ubuntu-latest
