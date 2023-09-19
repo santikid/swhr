@@ -30,6 +30,12 @@ pub struct Service {
     pub method: Method,
 }
 
+impl Service {
+    pub fn to_method_router(&self) -> MethodRouter {
+        self.into()
+    }
+}
+
 impl From<&Service> for MethodRouter {
     fn from(value: &Service) -> Self {
         let value = value.clone();

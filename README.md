@@ -4,7 +4,11 @@ run scripts on HTTP request
 
 ## Usage
 
-Configuration is stored in a hooks.yaml file.
+CLI Arguments:
+
+`--config` - custom config name/location
+
+`--listen` - custom listen URL
 
 ```yaml
 services:
