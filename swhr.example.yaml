@@ -1,0 +1,16 @@
+services:
+  - path: /webhook/example
+    method: POST
+    script: /usr/local/bin/example_script.sh
+    dir: /tmp
+    
+  - path: /webhook/secure-example
+    method: POST
+    script: /usr/local/bin/secure_example_script.sh
+    dir: /tmp
+    api_key: my-secret-api-key
+    
+  - path: /webhook/get-example
+    method: GET
+    script: /usr/local/bin/get_example_script.sh
+    dir: /home/user/scripts 
