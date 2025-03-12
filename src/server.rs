@@ -2,7 +2,7 @@ use crate::service::Service;
 use axum::Router;
 use std::net::SocketAddr;
 use tower_http::trace::TraceLayer;
-use tracing::{info, error};
+use tracing::{error, info};
 
 pub struct Server {
     router: Router,
@@ -26,16 +26,14 @@ impl Server {
 
     pub async fn listen(self, host: &str) -> Result<(), Box<dyn std::error::Error>> {
         let addr: SocketAddr = host.parse()?;
-        
+
         info!("Starting server on {}", addr);
-        
+
         let listener = tokio::net::TcpListener::bind(addr).await?;
-        
-        axum::serve(listener, self.router)
-            .await
-            .map_err(|e| {
-                error!("Server error: {}", e);
-                e.into()
-            })
+
+        axum::serve(listener, self.router).await.map_err(|e| {
+            error!("Server error: {}", e);
+            e.into()
+        })
     }
 }

@@ -1,7 +1,7 @@
+use anyhow::Result;
 use clap::Parser;
 use tracing::{error, info, level_filters::LevelFilter};
-use tracing_subscriber::{EnvFilter, fmt, prelude::*};
-use anyhow::Result;
+use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
 mod server;
 mod service;
@@ -17,7 +17,7 @@ struct Args {
     /// Listen address in format IP:PORT
     #[arg(short, long, default_value = "127.0.0.1:3344")]
     listen: String,
-    
+
     /// Log level (trace, debug, info, warn, error)
     #[arg(long, default_value = "info")]
     log_level: String,
@@ -31,10 +31,10 @@ struct Config {
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Args::parse();
-    
+
     // Initialize the tracing subscriber
     setup_logging(&args.log_level)?;
-    
+
     info!("Starting Simple Webhook Runner (swhr)");
     info!("Loading configuration from {}", args.config);
 
@@ -45,14 +45,14 @@ async fn main() -> Result<()> {
             return Err(err);
         }
     };
-    
+
     info!("Loaded {} service(s)", cfg.services.len());
-    
+
     for (i, service) in cfg.services.iter().enumerate() {
         info!(
-            "Service #{}: {} -> {} (method: {:?})", 
-            i + 1, 
-            service.path, 
+            "Service #{}: {} -> {} (method: {:?})",
+            i + 1,
+            service.path,
             service.script.display(),
             service.method
         );
@@ -64,7 +64,7 @@ async fn main() -> Result<()> {
         Ok(_) => {
             info!("Server shutdown gracefully");
             Ok(())
-        },
+        }
         Err(err) => {
             error!("Server error: {}", err);
             Err(anyhow::anyhow!("Server error: {}", err))
@@ -73,23 +73,23 @@ async fn main() -> Result<()> {
 }
 
 fn load_config(path: &str) -> Result<Config> {
-        // Load and parse configuration
-        let cfg = match std::fs::read_to_string(path) {
-            Ok(content) => content,
-            Err(err) => {
-                error!("Failed to read config file {}: {}", path, err);
-                return Err(anyhow::anyhow!("Failed to read config file: {}", err));
-            }
-        };
-        
-        match serde_yaml::from_str(&cfg) {
-            Ok(parsed) => Ok(parsed),
-            Err(err) => {
-                error!("Failed to parse config: {}", err);
-                Err(anyhow::anyhow!("Failed to parse config: {}", err))
-            }
+    // Load and parse configuration
+    let cfg = match std::fs::read_to_string(path) {
+        Ok(content) => content,
+        Err(err) => {
+            error!("Failed to read config file {}: {}", path, err);
+            return Err(anyhow::anyhow!("Failed to read config file: {}", err));
+        }
+    };
+
+    match serde_yaml::from_str(&cfg) {
+        Ok(parsed) => Ok(parsed),
+        Err(err) => {
+            error!("Failed to parse config: {}", err);
+            Err(anyhow::anyhow!("Failed to parse config: {}", err))
         }
     }
+}
 
 fn setup_logging(log_level: &str) -> Result<()> {
     let filter = match log_level.to_lowercase().as_str() {
@@ -103,17 +103,16 @@ fn setup_logging(log_level: &str) -> Result<()> {
             LevelFilter::INFO
         }
     };
-    
+
     let env_filter = EnvFilter::builder()
         .with_default_directive(filter.into())
         .from_env_lossy();
-    
+
     tracing_subscriber::registry()
         .with(fmt::layer())
         .with(env_filter)
         .try_init()
         .map_err(|e| anyhow::anyhow!("Failed to initialize logging: {}", e))?;
-    
+
     Ok(())
 }
-
