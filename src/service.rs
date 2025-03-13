@@ -5,10 +5,8 @@ use std::{
 };
 
 use axum::{
-    body::Bytes,
-    extract::{Json, State},
+    extract::State,
     http::{HeaderMap, StatusCode},
-    response::{IntoResponse, Response},
     routing::{delete, get, patch, post, put},
     Router,
 };
@@ -40,24 +38,24 @@ pub struct Service {
 }
 
 impl Service {
-    pub fn to_router(self) -> Router {
-        let service = Arc::new(self);
+    pub fn to_router(&self) -> Router {
+        let service = Arc::new(self.clone());
 
         match service.method {
             Method::Get => Router::new()
-                .route(&service.path, get(|h, s, b| handle_webhook(h, s, b)))
+                .route(&service.path, get(handle_webhook))
                 .with_state(service),
             Method::Post => Router::new()
-                .route(&service.path, post(|h, s, b| handle_webhook(h, s, b)))
+                .route(&service.path, post(handle_webhook))
                 .with_state(service),
             Method::Put => Router::new()
-                .route(&service.path, put(|h, s, b| handle_webhook(h, s, b)))
+                .route(&service.path, put(handle_webhook))
                 .with_state(service),
             Method::Delete => Router::new()
-                .route(&service.path, delete(|h, s, b| handle_webhook(h, s, b)))
+                .route(&service.path, delete(handle_webhook))
                 .with_state(service),
             Method::Patch => Router::new()
-                .route(&service.path, patch(|h, s, b| handle_webhook(h, s, b)))
+                .route(&service.path, patch(handle_webhook))
                 .with_state(service),
             _ => {
                 error!(
