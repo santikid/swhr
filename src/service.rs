@@ -105,7 +105,7 @@ async fn handle_webhook(
             error!("Failed to start {}: {}", service.script.display(), e);
             return (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                format!("Failed to execute webhook: {}", e),
+                format!("Failed to execute webhook: {e}"),
             );
         }
     }
