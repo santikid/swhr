@@ -1,5 +1,5 @@
 {
-  description = "Flake for Rust & Node.js development, building a Rust project and a kiosk ISO";
+  description = "simple webhook runner (SWHR)";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
